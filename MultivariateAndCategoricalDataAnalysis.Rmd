@@ -1,0 +1,150 @@
+---
+title: "Multivariate And Categorical Data Analysis"
+author: "Ritesh Kumar (218211529)"
+date: "8/8/2018"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r claenup workspace, message=FALSE, warning=FALSE, include=FALSE}
+rm(list=ls())
+gc()
+```
+
+```{r load Library, message=FALSE, warning=FALSE, include=FALSE}
+library(dplyr)
+library(ggplot2)
+```
+
+# Assignment - 1
+Bike sharing dataset (BikeShare)
+This dataset gives the count of bikes rented between 11am - 12pm on different days and locations through the Capital Bikeshare System (operating in US cities) between 2011 and 2012. The variables include the following (9 variables):
+
+Season: Categorical: 1 = Spring, 2 = Summer, 3 = Autumn (fall), 4 = Winter
+
+Working day: 0 = Weekend, 1 = Workday.
+
+Weather: Categorical variable
+
+  1: Clear, Few clouds, Partly cloudy, Partly cloudy
+  
+  2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist
+  
+  3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered cloud 
+  
+  4: Heavy Rain + Ice Pallets + Thunderstorm Mist, Snow + Fog
+  
+Temperature: Temperature in Celsius.
+
+`Feeling' Temperature: `Feels like' temperature, reported in Celsius.
+
+Humidity: Humidity (given as a percentage).
+
+Windspeed: Windspeed (measured in km/h).
+
+Casual users: Count of casual users that used a bike at that time.
+
+Registered users: Count of registered users that used a bike at that time.
+
+### Question-1
+Download the txt file “BikeShareTabSep.txt” and save it to your R working directory.
+
+• Assign the data to a matrix, e.g. using the.data<-as.matrix(read.table("BikeShareTabSep.txt"))
+
+• Generate a sample of 400 data using the following: my.data <- the.data [sample(1:727,400),c(1:9)]
+
+Save “my.data” to a text file titled “name-StudentID-BikeShareMyData.txt" using the following R code (NOTE: you must upload this text file with your submission).
+
+write.table(my.data,"name-StudentID-BikeShareMyData.txt")
+Use the sampled data (“my.data”) to answer the following questions.
+
+```{r Q1}
+the.data<-as.matrix(read.table("data/BikeShareTabSep.txt"))
+#nrow(the.data)
+my.data <- the.data [sample(1:727,400),c(1:9)]
+write.table(my.data,"data/ritesh-218211529-BikeShareMyData.txt")
+
+```
+
+#### 1.1) Draw histograms for ‘Registered users’ and ‘Temperature’ values, and comment on them. [3 Marks]
+
+```{r Q1.1}
+# Column Names
+col.names <- 
+  c("Season", "WorkingDay", "Weather", "Temperature", "FeelingTemperature", 
+    "Humidity", "Windspeed", "CasualUsers", "RegisteredUsers")
+# Set the column names
+colnames(my.data) <- col.names
+my.data.df <- as.data.frame(my.data)
+
+# Convert columns to categorical type
+my.data.df$Season <-as.factor(my.data.df$Season)
+my.data.df$WorkingDay <-as.factor(my.data.df$WorkingDay)
+my.data.df$Weather <-as.factor(my.data.df$Weather)
+
+# Data Summary
+summary(my.data.df)
+```
+
+```{r Registered User Histogram}
+# Registered User Histogram
+ggplot(
+  data = my.data.df,
+  aes(my.data.df$RegisteredUsers)) +
+    geom_histogram(
+      breaks = seq(0, 500, by = 20),
+      col = "red",
+      fill = "green",
+      alpha = .2) +
+    labs(title = "Histogram for Registered Users") +
+    labs(x = "Registered Users", y="Count") + 
+    xlim(c(0,500)) + 
+    ylim(c(0,60))
+```
+
+```{r Temperature Histogram}
+# Temperature Histogram
+ggplot(
+  data = my.data.df,
+  aes(my.data.df$Temperature)) +
+    geom_histogram(
+      breaks = seq(0, 50, by = 2),
+      col = "red",
+      fill = "green",
+      alpha = .2) +
+    labs(title = "Histogram for Registered Users") +
+    labs(x = "Registered Users", y="Count") + 
+    xlim(c(0,50)) + 
+    ylim(c(0,50))
+```
+
+####  1.2) Give the five number summary and the mean value for the ‘Casual users’ and the ‘Registered users’ separately. [3 Marks]
+
+```{r Q1.2}
+fivenum(my.data.df$CasualUsers)
+summary(my.data.df$CasualUsers)
+
+print(paste("Mean = ",mean(my.data.df$CasualUsers)), quote=FALSE)
+
+```
+
+####  1.3) Draw a parallel Box plot using the two variables; ‘Casual users’ and the ‘Registered users’. Use the answers to Q1.2 and the Boxplots to compare and comment on them. [3 Marks]
+
+```{r Q1.3}
+
+
+```
+
+####  1.4) Draw a scatterplot of ‘Temperature’ and ‘Casual users’ for the first 200 data vectors selected from the “my.data” (name the axes) and comment on them [2 Marks]
+
+```{r Q1.4}
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
