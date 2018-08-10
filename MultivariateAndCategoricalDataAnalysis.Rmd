@@ -171,15 +171,23 @@ boxplot(
 ####  1.4) Draw a scatterplot of ‘Temperature’ and ‘Casual users’ for the first 200 data vectors selected from the “my.data” (name the axes) and comment on them [2 Marks]
 
 ```{r Q1.4}
-ggplot(head(my.data.df,200), aes(x=Temperature, y=CasualUsers)) + geom_point()
-
+ggplot(head(my.data.df,200), aes(x=Temperature, y=CasualUsers)) + 
+  geom_point()
+  
+#scatter.smooth(x=head(my.data.df,200)$Temperature, y=head(my.data.df,200)$CasualUsers, main="CasualUsers ~ Temperature")
 ```
 
 
 ### 1.5) Fit a linear regression model to the ‘temperature’ (as x) and the ‘casual users’ (as y) using the first 200 data vectors selected from the “my.data”. Write down the linear regression equation. Plot the line on the same scatter plot. Compute the correlation coefficient and the coefficient of Determination. Explain what these results reveal. [5 Marks]
 
 ```{r Q1.5}
+cor(my.data.df$Temperature, my.data.df$CasualUsers) 
 
+linearMod <- lm(Temperature ~ CasualUsers, data=my.data.df)
+summary(linearMod)
+
+{plot(CasualUsers ~ Temperature, data=head(my.data.df,200)) 
+abline(lm(CasualUsers ~ Temperature, data=head(my.data.df,200)))}
 
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
