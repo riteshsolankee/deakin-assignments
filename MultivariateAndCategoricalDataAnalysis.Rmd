@@ -89,6 +89,7 @@ my.data.df$Weather <-as.factor(my.data.df$Weather)
 
 # Data Summary
 summary(my.data.df)
+#View(my.data.df)
 ```
 
 ```{r Registered User Histogram}
@@ -117,8 +118,8 @@ ggplot(
       col = "red",
       fill = "green",
       alpha = .2) +
-    labs(title = "Histogram for Registered Users") +
-    labs(x = "Registered Users", y="Count") + 
+    labs(title = "Histogram for Temperatures") +
+    labs(x = "Temperature", y="Count") + 
     xlim(c(0,50)) + 
     ylim(c(0,50))
 ```
@@ -126,10 +127,27 @@ ggplot(
 ####  1.2) Give the five number summary and the mean value for the ‘Casual users’ and the ‘Registered users’ separately. [3 Marks]
 
 ```{r Q1.2}
-fivenum(my.data.df$CasualUsers)
-summary(my.data.df$CasualUsers)
+message("Five Number Summary for 'Casual Users': ")
+message(sprintf(
+  "Minimum value  = %s\nLower Quartile = %s\nMedian = %s\nHiger Quartile = %s\nMaximum Value = %s\n", 
+  min(my.data.df$CasualUsers), 
+  quantile(my.data.df$CasualUsers, 0.25),
+  median(my.data.df$CasualUsers),
+  quantile(my.data.df$CasualUsers, 0.75),
+  max(my.data.df$CasualUsers)))
 
-print(paste("Mean = ",mean(my.data.df$CasualUsers)), quote=FALSE)
+message("Mean for 'Casual Users': = ", mean(my.data.df$CasualUsers))
+
+message("\nFive Number Summary for 'Registered users': ")
+message(sprintf(
+  "Minimum value  = %s\nLower Quartile = %s\nMedian = %s\nHiger Quartile = %s\nMaximum Value = %s\n", 
+  min(my.data.df$RegisteredUsers), 
+  quantile(my.data.df$RegisteredUsers, 0.25),
+  median(my.data.df$RegisteredUsers),
+  quantile(my.data.df$RegisteredUsers, 0.75),
+  max(my.data.df$RegisteredUsers)))
+
+message("Mean for 'Registered users' = ", mean(my.data.df$RegisteredUsers))
 
 ```
 
@@ -137,14 +155,31 @@ print(paste("Mean = ",mean(my.data.df$CasualUsers)), quote=FALSE)
 
 ```{r Q1.3}
 
+boxplot(
+  my.data.df[c("CasualUsers", "RegisteredUsers")], 
+  main="Distribution of Users",
+  xlab="Types of User", 
+  ylab="User Count",
+  col = c("red","sienna"),
+  at = c(1,2), 
+  #par(mar = c(12, 5, 4, 2) + 0.1),
+  names = c("CasualUsers", "RegisteredUsers"))
+
 
 ```
 
 ####  1.4) Draw a scatterplot of ‘Temperature’ and ‘Casual users’ for the first 200 data vectors selected from the “my.data” (name the axes) and comment on them [2 Marks]
 
 ```{r Q1.4}
-
+ggplot(head(my.data.df,200), aes(x=Temperature, y=CasualUsers)) + geom_point()
 
 ```
 
+
+### 1.5) Fit a linear regression model to the ‘temperature’ (as x) and the ‘casual users’ (as y) using the first 200 data vectors selected from the “my.data”. Write down the linear regression equation. Plot the line on the same scatter plot. Compute the correlation coefficient and the coefficient of Determination. Explain what these results reveal. [5 Marks]
+
+```{r Q1.5}
+
+
+```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
