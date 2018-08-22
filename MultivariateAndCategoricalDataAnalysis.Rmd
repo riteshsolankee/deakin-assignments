@@ -4,6 +4,7 @@ author: "Ritesh Kumar (218211529)"
 date: "8/8/2018"
 output:
   pdf_document: default
+  word_document: default
   html_document: default
 ---
 
@@ -19,6 +20,9 @@ gc()
 ```{r load Library, message=FALSE, warning=FALSE, include=FALSE}
 library(dplyr)
 library(ggplot2)
+library(MASS)
+library(vegan)
+library(kernlab)
 ```
 
 # Assignment - 1
@@ -190,4 +194,157 @@ summary(linearMod)
 abline(lm(CasualUsers ~ Temperature, data=head(my.data.df,200)))}
 
 ```
+
+### Question-6 - Dimensionality Reduction: [19 Marks]
+Use the “BikeShare” data for this question. Use the following code to load randomly selected 200 (or 100) data points. Note that only features from 4 to 9 are used here.
+
+  the.data <- as.matrix(read.table("BikeShareTabSep.txt"))
+  selData <- the.data [sample(1:727,200),c(4:9)]
+
+Save “selData” to a text file titled “name-StudentID-PCASelData.txt" using the following R code (NOTE you must upload this text file with your submission).
+  write.table(selData,"name-StudentID-PCASelData.txt")
+  
+```{r Q6}
+the.data.pca <- as.matrix(read.table("data/BikeShareTabSep.txt"))
+selData <- the.data.pca [sample(1:727,100),c(4:9)]
+
+write.table(selData,"data/ritesh-218211529-PCASelData.txt")
+```
+
+### 6.1) Conduct a principal component analysis (PCA) on this data (selData). Use the below mentioned “biplot” code (in R) to produce a scatterplot using the first two principal components. Comment on the plot. [4 Marks]
+
+```{r Q6.1}
+
+pZ <- prcomp(selData, tol = 0.01, scale = TRUE)
+pZ
+summary(pZ)
+biplot(pZ)
+
+```
+
+### 6.2) Draw a graph of variance verses the principal components, and explain how this can be used to determine the correct number of principal components. [ 3 Marks]
+
+```{r Q6.2}
+#par(mfrow=c(3,1))
+#x <- paste("PC", (seq(1,6,1)))
+plot(prcomp(selData))
+plot(pZ)
+plot((pZ$sdev)^2, type = "b", xlab = "Principal Component", ylab = "Variance", axes = FALSE)
+axis(1, at=1:6, labels=paste("PC", (seq(1,6,1))))
+axis(2)
+mtext(side=3, "Variance vs Principal Components")
+```
+
+### 6.3) For the same data above (selData), compute the Euclidean distance matrix. Use the distance matrix to perform a classical multidimensional scaling (classical MDS or Metric MDS). You can use the following command.
+
+  mds <- cmdscale(selData.dist) # here ‘selData.dist’ is the distance matrix
+  
+  Plot the results and comment on them [4 Marks]
+
+```{r Q6.3}
+
+selData.dist <- dist(selData)
+mds <- cmdscale(selData.dist) 
+plot(mds)
+
+```
+
+### 6.4) For the same data above (selData), perform a non-metric MDS, called ‘isoMDS’ in R using number of dimensions k set to 2. Use the following command to do this:
+  
+  library(MASS)
+  
+  fit<-isoMDS(selData.dist, k=2)
+  
+  Plot the results of this isoMDS [2 Marks]
+
+```{r Q6.4}
+#library(MASS)
+selData.x <- as.matrix(selData[,-1])
+fit<-isoMDS(selData.dist, k=2)
+plot(fit$points, type = "n", xlab="X",ylab="Y")
+text(fit$points, labels = as.character(1:nrow(selData.x)))
+```
+
+### 6.5) Draw the Shepard plot for this isoMDS results and comment on them [3 Marks]
+
+```{r Q6.5}
+selData.dist<-dist(selData.x)
+selData.dist.mds <- isoMDS(selData.dist, k=2)
+selData.sh<- Shepard(selData.dist, selData.dist.mds$points)
+plot(selData.sh, pch= ".")
+lines(selData.sh$x, selData.sh$yf, type = "S", col="red")
+```
+
+
+### 6.6) For the same data above (selData), perform a non-metric MDS, called ‘isoMDS’ in R using the number of dimensions k set to 4.
+
+  library(MASS)
+
+  fit<-isoMDS(selData.dist, k=4) Draw the Shepard plot for this isoMDS results and compare the plot obtained for k=2 in Q6.6 above. 
+  
+  Comment on them [3 Marks]
+
+```{r Q6.6}
+fit<-isoMDS(selData.dist, k=4)
+plot(fit$points, type = "n", xlab="X",ylab="Y")
+text(fit$points, labels = as.character(1:nrow(selData.x)))
+```
+
+### Question-7 - Clustering: [14 marks]
+
+### 7.1) K-Means clustering: Use the data file “SITdata2018.txt” provided in CloudDeakin for this question. Load the file “SITdata2018.txt” using the following:
+
+zz<-read.table("SITdata2018.txt")
+
+zz<-as.matrix(zz)
+
+```{r Q7.1}
+
+zz<-read.table("data/SITdata2018.txt")
+zz<-as.matrix(zz)
+# zz
+```
+
+```{r 7.1.a}
+# a) Draw a scatter plot of the data. [1 mark].
+plot(zz)
+```
+
+```{r 7.1.b}
+# b) State the number of classes/clusters that can be found in the “SITdata2018” (zz) [1 marks].
+```
+
+```{r 7.1.c}
+# c) Use the above number of classes as the k value and perform the k-means clustering on that data. Show the results using a scatterplot. Comment on the clusters obtained. [4 Marks]
+(cl <-kmeans(zz, 4, nstart= 25))
+plot(zz, col = cl$cluster)
+points(cl$centers, col = 1:5, pch= 8)
+```
+
+```{r 7.1.d}
+# d) Vary the number of clusters (k value) from 2 to 20 in increments of 1 and perform the k-means clustering for the above data. Record the total within sum of squares (TOTWSS) value for each k, and plot a graph of TOTWSS verses k. Explain how you can use this graph to find the correct number of classes/clusters in the data. [3 marks]
+totwss <- array(,c(20,1))
+for (i in 2:20)
+{
+print(i)
+totwss[i,1]=(kmeans(zz,centers=i))$tot.withinss
+print(totwss[i])
+}
+plot(totwss, main="total within sum of squres(totWSS) with diiferentK value")
+totwss
+```
+
+### 7.2) Spectral Clustering: Use the same dataset (zz) and run a spectral clustering (use the number of clusters/centers as 4) on it. Show the results on a scatter plot (with colour coding). Compare these clusters with the clusters obtained using the k-means above and comment on the results. [5 Marks]
+
+```{r 7.2}
+
+#data(zz)
+sc<-specc(zz, centers=5)
+sc
+centers(sc)
+size(sc)
+withinss(sc)
+plot(spirals, col=sc)
+```
+
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
