@@ -3,8 +3,8 @@ title: "Multivariate And Categorical Data Analysis"
 author: "Ritesh Kumar (218211529)"
 date: "8/8/2018"
 output:
-  pdf_document: default
   word_document: default
+  pdf_document: default
   html_document: default
 ---
 
@@ -187,7 +187,7 @@ ggplot(head(my.data.df,200), aes(x=Temperature, y=CasualUsers)) +
 ```{r Q1.5}
 cor(my.data.df$Temperature, my.data.df$CasualUsers) 
 
-linearMod <- lm(Temperature ~ CasualUsers, data=my.data.df)
+linearMod <- lm(CasualUsers ~ Temperature, data=my.data.df)
 summary(linearMod)
 
 {plot(CasualUsers ~ Temperature, data=head(my.data.df,200)) 
@@ -205,7 +205,9 @@ Save “selData” to a text file titled “name-StudentID-PCASelData.txt" using
   write.table(selData,"name-StudentID-PCASelData.txt")
   
 ```{r Q6}
-the.data.pca <- as.matrix(read.table("data/BikeShareTabSep.txt"))
+data.pca <- read.table("data/BikeShareTabSep.txt")
+colnames(data.pca) <- col.names
+the.data.pca <- as.matrix(data.pca)
 selData <- the.data.pca [sample(1:727,100),c(4:9)]
 
 write.table(selData,"data/ritesh-218211529-PCASelData.txt")
@@ -218,6 +220,7 @@ write.table(selData,"data/ritesh-218211529-PCASelData.txt")
 pZ <- prcomp(selData, tol = 0.01, scale = TRUE)
 pZ
 summary(pZ)
+cor(selData)
 biplot(pZ)
 
 ```
@@ -269,10 +272,19 @@ text(fit$points, labels = as.character(1:nrow(selData.x)))
 
 ```{r Q6.5}
 selData.dist<-dist(selData.x)
-selData.dist.mds <- isoMDS(selData.dist, k=2)
-selData.sh<- Shepard(selData.dist, selData.dist.mds$points)
-plot(selData.sh, pch= ".")
-lines(selData.sh$x, selData.sh$yf, type = "S", col="red")
+selData.dist.mds.2 <- isoMDS(selData.dist, k=2)
+selData.dist.mds.3 <- isoMDS(selData.dist, k=3)
+selData.dist.mds.4 <- isoMDS(selData.dist, k=4)
+
+selData.sh.2<- Shepard(selData.dist, selData.dist.mds.2$points)
+selData.sh.3<- Shepard(selData.dist, selData.dist.mds.3$points)
+selData.sh.4<- Shepard(selData.dist, selData.dist.mds.4$points)
+plot(selData.sh.2, pch= ".")
+lines(selData.sh.2$x, selData.sh$yf, type = "S", col="red")
+plot(selData.sh.3, pch= ".")
+lines(selData.sh.3$x, selData.sh$yf, type = "S", col="red")
+plot(selData.sh.4, pch= ".")
+lines(selData.sh.4$x, selData.sh$yf, type = "S", col="red")
 ```
 
 
@@ -316,7 +328,7 @@ plot(zz)
 
 ```{r 7.1.c}
 # c) Use the above number of classes as the k value and perform the k-means clustering on that data. Show the results using a scatterplot. Comment on the clusters obtained. [4 Marks]
-(cl <-kmeans(zz, 4, nstart= 25))
+cl <-kmeans(zz, 4, nstart= 25)
 plot(zz, col = cl$cluster)
 points(cl$centers, col = 1:5, pch= 8)
 ```
@@ -330,7 +342,7 @@ print(i)
 totwss[i,1]=(kmeans(zz,centers=i))$tot.withinss
 print(totwss[i])
 }
-plot(totwss, main="total within sum of squres(totWSS) with diiferentK value")
+plot(totwss, main="total within sum of squres(totWSS) with different K value")
 totwss
 ```
 
@@ -339,12 +351,14 @@ totwss
 ```{r 7.2}
 
 #data(zz)
-sc<-specc(zz, centers=5)
-sc
-centers(sc)
-size(sc)
-withinss(sc)
-plot(spirals, col=sc)
+zz.spectral<-read.table("data/SITdata2018.txt")
+zz.spectral<-as.matrix(zz.spectral)
+sc.spectral<-specc(zz.spectral, centers=5)
+sc.spectral
+centers(sc.spectral)
+size(sc.spectral)
+withinss(sc.spectral)
+plot(zz.spectral, col=sc.spectral)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
